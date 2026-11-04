@@ -3,6 +3,8 @@ const getMonkeysMW = require('../middleware/monkey/getMonkeys')
 const getBananasMW = require('../middleware/banana/getBananas')
 const getMonkeyMW = require('../middleware/monkey/getMonkey')
 const getBananaMW = require('../middleware/banana/getBanana')
+const createMonkeyMW = require('../middleware/monkey/createMonkey')
+const deleteMonkeyMW = require('../middleware/monkey/deleteMonkey')
 
 
 function addRoots(app) {
@@ -67,22 +69,7 @@ function addRoots(app) {
 
     
    
-    const createMonkey = (req, res, next) => {
-        if (typeof req.body.name == 'undefined' || typeof req.body.sex == 'undefined' || typeof req.body.species == 'undefined') {
-            req.status(400).json({ Error: `Missing name, sex or species` })
-        }
-        const newMonkey = {
-            id: globalMonkeyId,
-            name: req.body.name,
-            sex: req.body.sex,
-            species: req.body.species
-        }
-        monkeys.push(newMonkey);
-        globalMonkeyId++;
-        return res.status(200).json(newMonkey)
-
-    }
-
+    
     const createBanana = (req, res, next) => {
         if (typeof req.body.color == 'undefined' || typeof req.body.sweet == 'undefined') {
             req.status(400).json({ Error: `Missing color or sweet` })
@@ -100,9 +87,7 @@ function addRoots(app) {
     };
 
     const deleteMonkey = (req, res, next) => {
-        const deletedMonkeyById = monkeys[res.locals.monkeyIndex];
-        monkeys.splice(res.locals.monkeyIndex, 1);
-        return res.status(200).json({ deletedMonkeyById });
+        
     }
 
     const deleteBanana = (req, res, next) => {
@@ -165,20 +150,16 @@ function addRoots(app) {
         next();
     }
 
-    const deleteMonkeyBananas = (req, res, next) => {
-        const monkeyID = monkeys[res.locals.monkeyIndex].id;
-        bananas = bananas.filter(b => b.monkeyId !== monkeyID);
-        next();
-    };
+   
 
     app.get('/monkey', getMonkeysMW(objRep));
-    app.post('/monkey', createMonkey);
+    app.post('/monkey', createMonkeyMW(objRep));
     app.get('/monkey/:id', getMonkeyMW(objRep));
-    app.delete('/monkey/:id', deleteMonkeyBananas, deleteMonkey);
+    app.delete('/monkey/:id', deleteMonkeyMW(objRep));
     app.patch('/monkey/:id', updateMonkey);
 
     app.get('/banana', getBananasMW(objRep)); // Minden banán
-    app.post('/banana', checkMonkeyId, createBanana);
+    app.post('/banana', getMonkeyMW(objRep));
     app.get('/banana/:id',  getBananaMW(objRep));
     app.delete('/banana/:id',  deleteBanana);
     app.patch('/banana/:id',  checkMonkeyId, updateBanana);
