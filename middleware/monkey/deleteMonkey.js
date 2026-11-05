@@ -4,9 +4,7 @@ module.exports = (objRep) => {
         const index = monkeys.indexOf(res.locals.monkey)
         const monkeyId = res.locals.monkey.id
         monkeys.splice(index, 1)
-        console.log(res.locals.monkey.id)
-
         bananas = bananas.filter(b => b.monkeyId !== monkeyId);
-        return res.status(200).json({ deletedMonkeyById , monkeyId});
+        return next()
     }
 }

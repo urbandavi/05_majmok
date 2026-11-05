@@ -15,7 +15,8 @@ module.exports = (objRep)=>{
                    Error: `Requested bananaID not found! ${req.params.id}`
                });
            }
-           return res.status(200).json(bananas[foundId]);
+           res.locals.banana = bananas[foundId]
+           next()
     }
 
 }
