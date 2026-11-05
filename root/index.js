@@ -9,6 +9,8 @@ const getBananasMW = require('../middleware/banana/getBananas')
 const getBananaMW = require('../middleware/banana/getBanana')
 const createBananaMW = require('../middleware/banana/createBanana')
 const deleteBananaMW = require('../middleware/banana/deleteBanana')
+const checkMonkeMW = require('../middleware/banana/checkMonkey')
+
 
 
 function addRoots(app) {
@@ -95,24 +97,6 @@ function addRoots(app) {
 
 
 
-    const updateMonkey = (req, res, next) => {
-        if (typeof req.body.name !== 'undefined') {
-            monkeys[res.locals.monkeyIndex].name = req.body.name;
-        }
-        if (typeof req.body.sex !== 'undefined') {
-            monkeys[res.locals.monkeyIndex].sex = req.body.sex;
-        }
-        if (typeof req.body.species !== 'undefined') {
-            monkeys[res.locals.monkeyIndex].species = req.body.species;
-        }
-        if (typeof req.body.bananaId !== 'undefined') {
-            monkeys[res.locals.monkeyIndex].bananaId = req.body.bananaId;
-        }
-        if ((typeof req.body.name === 'undefined') && (typeof req.body.sex === 'undefined') && (typeof req.body.species === 'undefined')) {
-            return res.status(400).json({ error: 'Missing name, sex or species' })
-        }
-        return res.status(200).json(monkeys[res.locals.monkeyIndex]);
-    }
 
     const updateBanana = (req, res, next) => {
         if (typeof req.body.color !== 'undefined') {
@@ -173,9 +157,18 @@ function addRoots(app) {
         res.json(res.locals.monkey)
     });
 
-    app.get('/banana', getBananasMW(objRep)); // Minden banán
-    app.post('/banana', createBananaMW(objRep));
-    app.get('/banana/:id', getBananaMW(objRep));
+
+
+
+    app.get('/banana', getBananasMW(objRep), (req, res, next) => {
+        res.json(res.locals.bananas)
+    }); 
+    app.post('/banana', checkMonkeMW(objRep) ,createBananaMW(objRep), (req, res, next) => {
+        res.status(201).json(res.locals.newBanana)
+    });
+    app.get('/banana/:id', getBananaMW(objRep), (req, res, next) => {
+        res.json(res.locals.banana)
+    });
     app.delete('/banana/:id', getBananaMW(objRep), deleteBananaMW(objRep));
     app.patch('/banana/:id', checkMonkeyId, updateBanana);
 

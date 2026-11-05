@@ -1,5 +1,5 @@
 module.exports = (objRep) => {
-    const { monkeys, globalMonkeyId } = objRep
+    const { monkeys } = objRep
     return (req, res, next) => {
         if (typeof req.body.name == 'undefined' || typeof req.body.sex == 'undefined' || typeof req.body.species == 'undefined') {
             req.status(400).json({ Error: `Missing name, sex or species` })
