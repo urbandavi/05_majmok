@@ -169,7 +169,7 @@ function addRoots(app) {
             res.status(204)
         }
     );
-    app.patch('/monkey/:id', updateMonkeyMW(objRep), (req,res,next)=>{
+    app.patch('/monkey/:id', getMonkeyMW(objRep), updateMonkeyMW(objRep), (req, res, next) => {
         res.json(res.locals.monkey)
     });
 
