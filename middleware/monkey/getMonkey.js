@@ -15,6 +15,7 @@ module.exports = (objRep)=>{
                    Error: `Requested monkeyID not found! ${req.params.id}`
                });
            }
+           res.locals.monkey = monkeys[foundId]
            return res.status(200).json(monkeys[foundId]);
     }
 

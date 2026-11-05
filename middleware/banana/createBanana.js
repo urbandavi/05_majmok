@@ -1,5 +1,5 @@
 module.exports = (objRep) => {
-    const { bananas, globalBananaId } = objRep
+    let { bananas, globalBananaId } = objRep
     return (req, res, next) => {
          if (typeof req.body.color == 'undefined' || typeof req.body.sweet == 'undefined') {
             req.status(400).json({ Error: `Missing color or sweet` })

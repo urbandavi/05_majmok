@@ -5,11 +5,13 @@ const getMonkeyMW = require('../middleware/monkey/getMonkey')
 const getBananaMW = require('../middleware/banana/getBanana')
 const createMonkeyMW = require('../middleware/monkey/createMonkey')
 const deleteMonkeyMW = require('../middleware/monkey/deleteMonkey')
+const createBananaMW = require('../middleware/banana/createBanana')
+
 
 
 function addRoots(app) {
     
-    const monkeys = [
+    let monkeys = [
         {
             id: 1,
             name: 'Joe',
@@ -31,7 +33,7 @@ function addRoots(app) {
         }
     ]
     
-    const bananas = [
+    let bananas = [
         {
             id: 1,
             color: "yellow",
@@ -70,25 +72,23 @@ function addRoots(app) {
     
    
     
-    const createBanana = (req, res, next) => {
-        if (typeof req.body.color == 'undefined' || typeof req.body.sweet == 'undefined') {
-            req.status(400).json({ Error: `Missing color or sweet` })
-        }
-        const newBanana = {
-            id: globalBananaId,
-            color: req.body.color,
-            sweet: req.body.sweet,
-            monkeyId: req.body.monkeyId ?? null
-        };
+    // const createBanana = (req, res, next) => {
+    //     if (typeof req.body.color == 'undefined' || typeof req.body.sweet == 'undefined') {
+    //         req.status(400).json({ Error: `Missing color or sweet` })
+    //     }
+    //     const newBanana = {
+    //         id: globalBananaId,
+    //         color: req.body.color,
+    //         sweet: req.body.sweet,
+    //         monkeyId: req.body.monkeyId ?? null
+    //     };
 
-        bananas.push(newBanana);
-        globalBananaId++;
-        return res.status(201).json(newBanana);
-    };
+    //     bananas.push(newBanana);
+    //     globalBananaId++;
+    //     return res.status(201).json(newBanana);
+    // };
 
-    const deleteMonkey = (req, res, next) => {
-        
-    }
+   
 
     const deleteBanana = (req, res, next) => {
         const deletedBananaById = bananas[res.locals.bananaIndex];
@@ -155,11 +155,11 @@ function addRoots(app) {
     app.get('/monkey', getMonkeysMW(objRep));
     app.post('/monkey', createMonkeyMW(objRep));
     app.get('/monkey/:id', getMonkeyMW(objRep));
-    app.delete('/monkey/:id', deleteMonkeyMW(objRep));
+    app.delete('/monkey/:id',getMonkeyMW(objRep), deleteMonkeyMW(objRep));
     app.patch('/monkey/:id', updateMonkey);
 
     app.get('/banana', getBananasMW(objRep)); // Minden banán
-    app.post('/banana', getMonkeyMW(objRep));
+    app.post('/banana', createBananaMW(objRep));
     app.get('/banana/:id',  getBananaMW(objRep));
     app.delete('/banana/:id',  deleteBanana);
     app.patch('/banana/:id',  checkMonkeyId, updateBanana);
