@@ -3,6 +3,7 @@ const getMonkeysMW = require('../middleware/monkey/getMonkeys')
 const getMonkeyMW = require('../middleware/monkey/getMonkey')
 const deleteMonkeyMW = require('../middleware/monkey/deleteMonkey')
 const updateMonkeyMW = require('../middleware/monkey/updateMonkey')
+const deleleteMonkeyBananaMW = require('../middleware/monkey/delelteMonkeyBanana')
 
 
 const getBananasMW = require('../middleware/banana/getBananas')
@@ -10,6 +11,7 @@ const getBananaMW = require('../middleware/banana/getBanana')
 const createBananaMW = require('../middleware/banana/createBanana')
 const deleteBananaMW = require('../middleware/banana/deleteBanana')
 const checkMonkeMW = require('../middleware/banana/checkMonkey')
+const updateBananaMW = require('../middleware/banana/updateBanana')
 
 
 
@@ -42,7 +44,7 @@ function addRoots(app) {
             id: 1,
             color: "yellow",
             sweet: false,
-            monkeyId: null
+            monkeyId: 2
         },
         {
             id: 2,
@@ -62,35 +64,12 @@ function addRoots(app) {
             monkeyId: null
         }
     ]
-    let globalMonkeyId = monkeys.length + 1;
-    let globalBananaId = bananas.length + 1;
     const objRep = {
         monkeys,
         bananas,
-        globalMonkeyId,
-        globalBananaId
+        globalMonkeyId: monkeys.length + 1,
+        globalBananaId: bananas.length + 1
     }
-
-
-
-
-
-
-    // const createBanana = (req, res, next) => {
-    //     if (typeof req.body.color == 'undefined' || typeof req.body.sweet == 'undefined') {
-    //         req.status(400).json({ Error: `Missing color or sweet` })
-    //     }
-    //     const newBanana = {
-    //         id: globalBananaId,
-    //         color: req.body.color,
-    //         sweet: req.body.sweet,
-    //         monkeyId: req.body.monkeyId ?? null
-    //     };
-
-    //     bananas.push(newBanana);
-    //     globalBananaId++;
-    //     return res.status(201).json(newBanana);
-    // };
 
 
 
@@ -146,11 +125,11 @@ function addRoots(app) {
     );
     app.get('/monkey/:id', getMonkeyMW(objRep),
         (req, res, next) => {
-            res.status(201).json(res.locals.newMonkey)
+            res.status(200).json(res.locals.monkey)
         });
-    app.delete('/monkey/:id', getMonkeyMW(objRep), deleteMonkeyMW(objRep),
+    app.delete('/monkey/:id', getMonkeyMW(objRep), deleleteMonkeyBananaMW(objRep), deleteMonkeyMW(objRep),
         (req, res, next) => {
-            res.status(204)
+            res.status(200).json(res.locals.monkey)
         }
     );
     app.patch('/monkey/:id', getMonkeyMW(objRep), updateMonkeyMW(objRep), (req, res, next) => {
@@ -162,18 +141,22 @@ function addRoots(app) {
 
     app.get('/banana', getBananasMW(objRep), (req, res, next) => {
         res.json(res.locals.bananas)
-    }); 
-    app.post('/banana', checkMonkeMW(objRep) ,createBananaMW(objRep), (req, res, next) => {
+    });
+    app.post('/banana', checkMonkeMW(objRep), createBananaMW(objRep), (req, res, next) => {
         res.status(201).json(res.locals.newBanana)
     });
     app.get('/banana/:id', getBananaMW(objRep), (req, res, next) => {
         res.json(res.locals.banana)
     });
-    app.delete('/banana/:id', getBananaMW(objRep), deleteBananaMW(objRep));
-    app.patch('/banana/:id', checkMonkeyId, updateBanana);
+    app.delete('/banana/:id', getBananaMW(objRep), deleteBananaMW(objRep), (req, res, next) => {
+        res.json(res.locals.banana)
+    });
+    app.patch('/banana/:id', getBananaMW(objRep), checkMonkeMW(objRep), updateBananaMW(objRep)
+        , (req, res, next) => {
+            res.status(200).json(res.locals.banana)
+        }
+    );
 
 }
-
-
 
 module.exports = addRoots
